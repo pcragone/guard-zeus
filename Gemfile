@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-# Specify your gem's dependencies in guard-spin.gemspec
+# Specify your gem's dependencies in guard-zeus.gemspec
 gemspec
 
 group :development do
