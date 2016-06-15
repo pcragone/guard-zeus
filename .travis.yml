@@ -3,6 +3,9 @@ bundler_args: --without development
 rvm:
 - 1.9.3
 - 2.1.2
+matrix:
+  allow_failures:
+    - rvm: 1.9.3
 deploy:
   provider: rubygems
   api_key:
