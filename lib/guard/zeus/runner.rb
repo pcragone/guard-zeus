@@ -81,35 +81,30 @@ module Guard
       end
 
       def sockfile
-        File.join(Dir.pwd, '.zeus.sock')
+        unless ENV['ZEUSSOCK'].to_s.empty?
+          ENV['ZEUSSOCK']
+        else
+          File.join(Dir.pwd, '.zeus.sock')
+        end
       end
 
       def spawn_zeus(cmd, options = '')
-        Compat::UI.debug "About to spawn zeus"
         @zeus_pid = fork do
           exec "#{cmd} #{options}"
         end
-        Compat::UI.debug "Zeus has PID #{@zeus_pid}"
       end
 
       def stop_zeus
-        Compat::UI.debug 'Stopping Zeus'
         return unless @zeus_pid
-        Compat::UI.debug 'Stopping Zeus using a PID'
 
-        Compat::UI.debug "Killing process #{@zeus_pid}"
         Process.kill(:INT, @zeus_pid)
-        Compat::UI.debug "Killed process #{@zeus_pid}"
 
         begin
-          Compat::UI.debug "Set process #{@zeus_pid} to wait"
           unless Process.waitpid(@zeus_pid, Process::WNOHANG)
-            Compat::UI.debug "Killing process #{@zeus_pid} after wait"
             Process.kill(:KILL, @zeus_pid)
-            Compat::UI.info "Killed process #{@zeus_pid} after wait"
+            `kill #{`ps aux | grep "[z]eus slave" | awk '{print $2}'`.split("\n").join(" ")}`
           end
         rescue Errno::ECHILD
-          Compat::UI.debug "ECHILD path"
         end
 
         delete_sockfile if File.exist? sockfile
