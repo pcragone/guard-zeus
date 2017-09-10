@@ -15,21 +15,29 @@ module Guard
       runner.launch_zeus('Start')
     end
 
+    def stop
+      runner.kill_zeus
+    end
+
     def reload
       runner.kill_zeus
       runner.launch_zeus('Reload')
     end
 
+    # do nothing
     def run_all
-      runner.run_all
     end
 
     def run_on_modifications(paths)
-      runner.run(paths)
+      reload()
     end
 
-    def stop
-      runner.kill_zeus
+    def run_on_additions(paths)
+      reload()
+    end
+
+    def run_on_removals(paths)
+      reload()
     end
   end
 end

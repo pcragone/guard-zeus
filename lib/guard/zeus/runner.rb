@@ -40,19 +40,6 @@ module Guard
         spawn_zeus zeus_serve_command, zeus_serve_options
       end
 
-      def run(paths)
-        run_command zeus_push_command(paths), zeus_push_options
-      end
-
-      def run_all
-        return unless options[:run_all]
-        if rspec?
-          run(['spec'])
-        elsif test_unit?
-          run(Dir['test/**/*_test.rb'] + Dir['test/**/test_*.rb'])
-        end
-      end
-
       private
 
       def bundler?
@@ -102,7 +89,8 @@ module Guard
         begin
           unless Process.waitpid(@zeus_pid, Process::WNOHANG)
             Process.kill(:KILL, @zeus_pid)
-            `kill #{`ps aux | grep "[z]eus slave" | awk '{print $2}'`.split("\n").join(" ")}`
+            pids = `ps aux | grep "[z]eus slave" | awk '{print $2}'`.split("\n").join(" ")
+            `kill #{pids}` unless pids.empty?
           end
         rescue Errno::ECHILD
         end
@@ -114,18 +102,6 @@ module Guard
 
       def test_unit?
         @test_unit ||= options[:test_unit] != false && File.exist?("#{Dir.pwd}/test/test_helper.rb")
-      end
-
-      def zeus_push_command(paths)
-        cmd_parts = []
-        cmd_parts << 'bundle exec' if bundler?
-        cmd_parts << 'zeus test'
-        cmd_parts << paths.join(' ')
-        cmd_parts.join(' ')
-      end
-
-      def zeus_push_options
-        ''
       end
 
       def zeus_serve_command
