@@ -91,6 +91,8 @@ module Guard
             Process.kill(:KILL, @zeus_pid)
             pids = `ps aux | grep "[z]eus slave" | awk '{print $2}'`.split("\n").join(" ")
             `kill #{pids}` unless pids.empty?
+            pids = `ps aux | grep puma | awk '{print $2}'`.split("\n").join(" ")
+            `kill #{pids}` unless pids.empty?
           end
         rescue Errno::ECHILD
         end
