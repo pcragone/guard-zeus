@@ -40,11 +40,7 @@ Please read [Guard doc](https://github.com/guard/guard#readme) for more informat
 Available options:
 
 ``` ruby
-:rspec => false          # Don't use RSpec
-:test_unit => false      # Don't use Test::Unit
-:bundler => false        # Don't use "bundle exec"
 :cli => '--time'         # Pass options to zeus. `zeus commands` for more zeus options
-:run_all => true         # Run all tests when hitting enter in guard
 ```
 
 Known Issues
